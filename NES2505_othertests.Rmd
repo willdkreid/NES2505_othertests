@@ -11,6 +11,7 @@ library(ggformula)
 library(patchwork)
 library(sm)
 library(car)
+library(detectnorm)
 
 knitr::opts_chunk$set(echo = FALSE)
 
@@ -199,13 +200,13 @@ signed_rank(my_tiny_dat) # Rankings -4 for lowest to +5 for highest, as +/- sign
 
 Creating ranks is all you need to do to convert most parametric tests into their "non-parametric" counterparts! This means that **many "non-parametric tests" are very similar to the conventional parametric counterparts, but use rank-transformed data**. However, remember that as they convert your data into "first", "second" etc. you are **losing information** so they are less powerful.
 
-## One-sample t-test
-This is the simplest form of t-test. You are basically trying to determine whether:
+## One-sample test
+One sample tests are the simplest form of a statistical test. You are basically trying to determine whether:
 
 * the mean of your set of numbers is different from zero (either positively or negatively), or
 * whether the mean of your set of numbers is roughly the same as zero
 
-The following diagram summarises the idea for the one-sample t-test. The question you are addressing is whether the blue horizontal line significantly differs from zero. The diagram for the left shows the conventional parametric **one-sample t-test**, that on the right the non-parametric equivalent using ranks, known as the **Wilcoxon test**. The one on the left is most useful.
+The following diagram summarises the idea for the one-sample test. The question you are addressing is whether the blue horizontal line significantly differs from zero. The diagram for the left shows the conventional parametric **one-sample t-test** and that on the right the non-parametric equivalent using ranks, known as the **Wilcoxon test**. The one on the left is most useful.
 
 ```{r one_sample_t_test, warning=FALSE}
 
@@ -242,8 +243,7 @@ plot, whereas the ranked (ordered) values are showing for the non-parametric
 Wilcoxon plot.
 
 ### One-sample t-test
-This is how you can check whether your mean value for your data is different from
-zero, using the conventional built-in `t.test()` function, or when expressed
+One-sample t-test is how you can check whether your mean value for your data is different from zero, using the conventional built-in `t.test()` function, or when expressed
 as a linear model with `lm()`. Throughout this course you have been encouraged to think in terms of:
 
 $$Response=Explanatory+\epsilon$$
@@ -262,18 +262,11 @@ and
 are exactly the same.
 
 **But we don't have any explanatories?!**
-If all you want to do is see if the overall average of your numbers differs from zero, you do not of course have a set of explanatories. You can simply tell R to only fit the `(Intercept)` term, which as we have just seen will be the overall average.  So we simply need something like:
+If all you want to do is see if the overall average of your numbers differs from zero, you do not of course have a set of explanatories. You can simply tell R to only fit the `(Intercept)` term, which as we have just seen will be the overall average. So we simply need something like:
 
 `simple_ttest <- lm(y ~ 1, data=my_dat)`
 
 R has a built-in function called `t.test()` which does the same thing, but the "response ~ explanatory" philosophy is clearer.
-
-### Data for one-sample t-test
-The simplest thing is for you to enter a single column of values into Excel (include a column header with a name, no spaces). Then remember to save it in **.CSV** format into your **`Data`** sub-folder in your `MST2204` folder, e.g. `mynumbers.csv`. Then you simply need:
-
-`y <- read.csv("Data/mynumbers.csv")`
-
-to import your column of values into R in the usual way with `read.csv()`.
 
 ### Example of one-sample t-test via both built-in command and linear model
 Let's try the two functions, `t.test()` and `lm()` on a dataset `y` with 50 values (you will see 49 degrees of freedom as a result).
@@ -305,11 +298,10 @@ summary(b)
 ```
 
 Although the formatting of the output from the two tests is slightly different
-note that the mean (shown as `(Intercept)` Estimate for `lm`), t-statistics and p-values etc.
-are almost identical. As the p-value here is **greater** than 0.05, we can state that there is no significant difference between the average of these data ```r mean(y)``` and zero.
+note that the mean (shown as `(Intercept)` Estimate for `lm`), t-statistics and p-values etc. are almost identical. As the p-value here is **greater** than 0.05, we can state that there is no significant difference between the mean of these data ```r mean(y)``` and zero. When reporting these results, you would include the t-statistic, df and p-value.
 
 ### Wilcoxon test
-This is the non-parametric (rank-based) equivalent. Here, we use a signed-rank method. We can use the `wilcoxon.test()` or `t.test()` functions, but these are yet more functions to remember. Probably easier to think of it as a standard linear model, use `lm()` and add the `signed_rank()` function. The following give the same results:
+This is the non-parametric (rank-based) equivalent of a one-sample t-test. Here, we use a signed-rank method. We can use the `wilcoxon.test()` or `t.test()` functions, but these are yet more functions to remember. Probably easier to think of it as a standard linear model, use `lm()` and add the `signed_rank()` function. The following give the same results:
 
 ```{r, wilcoxon-setup}
 set.seed(40)
@@ -336,7 +328,7 @@ summary(b)
 
 The p-statistics are approximately the same for both methods. With very small sample sizes the `wilcox.test()` will be slightly more accurate. Again, the p-value is **greater** than 0.05, indicating that your set of numbers is **not** significantly different from zero.
 
-## Paired t-tests
+## Paired tests
 Sometimes you will have a set of samples that are coupled together in some way.
 For example:
 
@@ -441,9 +433,8 @@ summary(b)
 
 Again, you can see that the p-values are fairly similar. Sticking with the `lm()` formulation is much simpler conceptually, and requires slightly less typing. Remember to create the `signed_rank()` function yourself before you use it, as shown on the parametric and non-parametric tests page.
 
-## Independent t-test
-This is the basic t-test, sometimes referred to as **Student's t-test**. Basically
-you are trying to **compare two means** to see if they are different:
+## Independent two-sample tests
+Independent two sample tests are when you have two samples that are independent of each other and you would like to test whether they are different. Under these circumstances you would use a **Student's t-test**. Basically, you are trying to **compare two means** to see if they are different:
 
 ```{r, warning=FALSE}
 # Data
@@ -626,6 +617,10 @@ Analysis of Covariance is slightly different to ANOVA but crucially it is still 
 For example, if we collect fish from two different locations (e.g. NW and SE), measure their standard lengths and analyse the biochemical composition of their tissue (d13C), we can test whether the gradient and elevation of the lines are significantly different.
 
 In doing this type of analysis it is important to plot your data first.
+```{r, ANCOVA-setup, warning=FALSE, include = FALSE}
+anr <- read.csv("Data/anr_ancova.csv", header = TRUE, sep = ",")
+```
+
 
 ```{r, ANCOVA, exercise = TRUE}
 # plot data first
@@ -691,33 +686,31 @@ You can see whether your data follows a normal distribution (bell-shaped curve) 
 
 ```{r, kw_example-setup, include = FALSE}
 
-set.seed(42)
-N = 50  # Number of samples per group
-D = data.frame(
-  value2 = c(rbeta(50,5,2), rbeta(50,2,5), rbeta(50,5,5)),
-  group2 = rep(c('a', 'b', 'c'), each = N),
-  
-  # Explicitly add indicator/dummy variables
-  # Could also be done using model.matrix(~D$group)
-  #group_a = rep(c(1, 0, 0), each=N),  # This is the intercept. No need to code
-  group2_b = rep(c(0, 1, 0), each = N),
-  group2_c = rep(c(0, 0, 1), each = N)
-)
+read.csv("white.")
 
 ```
 
 
 ```{r, kw_example, exercise = TRUE}
-# Plot histograms 
-gf_histogram(~value2|group2, bins= 12, data = D) %>%
+# Plot histograms to look at the distribution
+gf_histogram(~conc, bins= 8, data = white_cell) %>%
   gf_theme(theme_classic())
 
+# you can double check which are not normally distributed use the Shapiro-Wilk Test for normality
+white_cell %>% filter(fish_group == "a") -> fishgroup_a
+white_cell %>% filter(fish_group == "b") -> fishgroup_b
+white_cell %>% filter(fish_group == "c") -> fishgroup_c
+
+shapiro.test(fishgroup_a$conc)
+shapiro.test(fishgroup_b$conc)
+shapiro.test(fishgroup_c$conc)
+
 # check the variability with the boxplots
-gf_boxplot(value2 ~ group2, data = D) %>%
+gf_boxplot(conc ~ fish_group, data = white_cell) %>%
   gf_theme(theme_classic())
 
 # Undertake the Kruskal-Wallis test
-kruskal.test(value2 ~ group2, data = D)
+kruskal.test(conc ~ fish_group, data = white_cell)
 
 ```
 When reporting a Kruskal-Wallis test, make sure you quote the $\chi^2$ value, degrees of freedom and the p-value. 
