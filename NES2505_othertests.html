@@ -743,8 +743,9 @@ composition of their tissue (d13C), we can test whether the gradient and
 elevation of the lines are significantly different.</p>
 <p>In doing this type of analysis it is important to plot your data
 first.</p>
-<div class="tutorial-exercise" data-label="ANCOVA" data-completion="1"
-data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise" data-label="ANCOVAplot"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
 <pre class="text"><code># plot data first
 gf_point(d13c ~ standard_length, col = ~area, data = anr) %&gt;%
   gf_theme(theme_classic()) %&gt;% 
@@ -757,7 +758,7 @@ location appear greater than the NW and so is the line we have plotted
 through our data but are the locations significantly different?</p>
 <p>We can then undertake the analysis the same as previously using
 <code>lm()</code> function as we have done in the practicals.</p>
-<div class="tutorial-exercise" data-label="ANCOVA_2" data-completion="1"
+<div class="tutorial-exercise" data-label="ANCOVA" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code># create the linear model using `lm`
 m1&lt;-lm(d13c ~ standard_length + area, data = anr)
@@ -1618,6 +1619,72 @@ learnr:::store_exercise_cache(structure(list(label = "rank_correlation", global_
 
 
 <script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ANCOVAplot-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ANCOVAplot-code-editor`)), session)
+output$`tutorial-exercise-ANCOVAplot-output` <- renderUI({
+  `tutorial-exercise-ANCOVAplot-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ANCOVAplot", global_setup = structure(c("library(learnr)", 
+"library(mosaic)", "library(ggformula)", "library(patchwork)", 
+"library(sm)", "library(car)", "library(detectnorm)", "", "knitr::opts_chunk$set(echo = FALSE)", 
+"", "# Functions from example site", "# Generate normal data with known parameters", 
+"rnorm_fixed = function(N, mu = 0, sd = 1)", "  scale(rnorm(N)) * sd + mu", 
+"signed_rank = function(x) sign(x) * rank(abs(x))", "# Plot style.", 
+"theme_axis = function(P,", "                      jitter = FALSE,", 
+"                      xlim = c(-0.5, 2),", "                      ylim = c(-0.5, 2),", 
+"                      legend.position = NULL) {", "  P = P + theme_bw(15) +", 
+"    geom_segment(", "      x = -1000, xend = 1000,", "      y = 0, yend = 0,", 
+"      lty = 2, color = 'dark gray', lwd = 0.5", "    ) +", "    geom_segment(", 
+"      x = 0, xend = 0,", "      y = -1000, yend = 1000,", "      lty = 2, color = 'dark gray', lwd = 0.5", 
+"    ) +", "    coord_cartesian(xlim = xlim, ylim = ylim) +", 
+"    theme(", "      axis.title = element_blank(),", "      axis.text = element_blank(),", 
+"      axis.ticks = element_blank(),", "      panel.border = element_blank(),", 
+"      panel.grid = element_blank(),", "      legend.position = legend.position", 
+"    )", "  ", "  # Return jittered or non-jittered plot?", "  if (jitter) {", 
+"    P + geom_jitter(width = 0.1, size = 2)", "  }", "  else {", 
+"    P + geom_point(size = 2)", "  }", "}", "", "signed_rank = function(x) sign(x) * rank(abs(x))", 
+"", "", "set.seed(40)", "# Data from example site", "y = c(rnorm(15), exp(rnorm(15)), runif(20, min = -3, max = 0))  # Almost zero mean, not normal", 
+"x = rnorm_fixed(50, mu = 0, sd = 1)  # Used in correlation where this is on x-axis", 
+"y2 = rnorm_fixed(50, mu = 0.5, sd = 1.5)  # Used in two means", 
+"", "# Long format data with indicator", "value = c(y, y2)", 
+"group = rep(c('y1', 'y2'), each = 50)", ""), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = "anr <- read.csv(\"Data/anr_ancova.csv\", header = TRUE, sep = \",\")", 
+    chunks = list(list(label = "ANCOVAplot-setup", code = "anr <- read.csv(\"Data/anr_ancova.csv\", header = TRUE, sep = \",\")", 
+        opts = list(label = "\"ANCOVAplot-setup\"", warning = "FALSE", 
+            include = "FALSE"), engine = "r"), list(label = "ANCOVAplot", 
+        code = "# plot data first\ngf_point(d13c ~ standard_length, col = ~area, data = anr) %>%\n  gf_theme(theme_classic()) %>% \n  gf_lm(d13c ~ standard_length, col = ~area, data = anr) %>%\n  gf_labs(x = \"Standard length (mm)\", y = \"d13c per mil\")\n", 
+        opts = list(label = "\"ANCOVAplot\"", exercise = "TRUE"), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = NULL, tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "NES2505_othertests_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "NES2505_othertests_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, label = "ANCOVAplot", exercise = TRUE, 
+        code = c("# plot data first", "gf_point(d13c ~ standard_length, col = ~area, data = anr) %>%", 
+        "  gf_theme(theme_classic()) %>% ", "  gf_lm(d13c ~ standard_length, col = ~area, data = anr) %>%", 
+        "  gf_labs(x = \"Standard length (mm)\", y = \"d13c per mil\")", 
+        ""), out.width.px = 624, out.height.px = 384, params.src = " ANCOVAplot, exercise = TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-ANCOVA-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ANCOVA-code-editor`)), session)
 output$`tutorial-exercise-ANCOVA-output` <- renderUI({
   `tutorial-exercise-ANCOVA-result`()
@@ -1653,7 +1720,7 @@ learnr:::store_exercise_cache(structure(list(label = "ANCOVA", global_setup = st
     chunks = list(list(label = "ANCOVA-setup", code = "anr <- read.csv(\"Data/anr_ancova.csv\", header = TRUE, sep = \",\")", 
         opts = list(label = "\"ANCOVA-setup\"", warning = "FALSE", 
             include = "FALSE"), engine = "r"), list(label = "ANCOVA", 
-        code = "# plot data first\ngf_point(d13c ~ standard_length, col = ~area, data = anr) %>%\n  gf_theme(theme_classic()) %>% \n  gf_lm(d13c ~ standard_length, col = ~area, data = anr) %>%\n  gf_labs(x = \"Standard length (mm)\", y = \"d13c per mil\")\n", 
+        code = "# create the linear model using `lm`\nm1<-lm(d13c ~ standard_length + area, data = anr)\n\n# look to see whether the variables in the model are significant\nAnova(m1)\n\n# we we still need to check whether the assumptions are met\nanr_resid <- residuals(m1)\ngf_qq(~anr_resid) %>%\n  gf_qqline()\n", 
         opts = list(label = "\"ANCOVA\"", exercise = "TRUE"), 
         engine = "r")), code_check = NULL, error_check = NULL, 
     check = NULL, solution = NULL, tests = NULL, options = list(
@@ -1673,75 +1740,12 @@ learnr:::store_exercise_cache(structure(list(label = "ANCOVA", global_setup = st
         message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
         engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
         max.print = 1000, label = "ANCOVA", exercise = TRUE, 
-        code = c("# plot data first", "gf_point(d13c ~ standard_length, col = ~area, data = anr) %>%", 
-        "  gf_theme(theme_classic()) %>% ", "  gf_lm(d13c ~ standard_length, col = ~area, data = anr) %>%", 
-        "  gf_labs(x = \"Standard length (mm)\", y = \"d13c per mil\")", 
-        ""), out.width.px = 624, out.height.px = 384, params.src = " ANCOVA, exercise = TRUE", 
-        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
-    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
-)))
-</script>
-
-
-<script type="application/shiny-prerendered" data-context="server">
-`tutorial-exercise-ANCOVA_2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ANCOVA_2-code-editor`)), session)
-output$`tutorial-exercise-ANCOVA_2-output` <- renderUI({
-  `tutorial-exercise-ANCOVA_2-result`()
-})
-</script>
- 
-<script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ANCOVA_2", global_setup = structure(c("library(learnr)", 
-"library(mosaic)", "library(ggformula)", "library(patchwork)", 
-"library(sm)", "library(car)", "library(detectnorm)", "", "knitr::opts_chunk$set(echo = FALSE)", 
-"", "# Functions from example site", "# Generate normal data with known parameters", 
-"rnorm_fixed = function(N, mu = 0, sd = 1)", "  scale(rnorm(N)) * sd + mu", 
-"signed_rank = function(x) sign(x) * rank(abs(x))", "# Plot style.", 
-"theme_axis = function(P,", "                      jitter = FALSE,", 
-"                      xlim = c(-0.5, 2),", "                      ylim = c(-0.5, 2),", 
-"                      legend.position = NULL) {", "  P = P + theme_bw(15) +", 
-"    geom_segment(", "      x = -1000, xend = 1000,", "      y = 0, yend = 0,", 
-"      lty = 2, color = 'dark gray', lwd = 0.5", "    ) +", "    geom_segment(", 
-"      x = 0, xend = 0,", "      y = -1000, yend = 1000,", "      lty = 2, color = 'dark gray', lwd = 0.5", 
-"    ) +", "    coord_cartesian(xlim = xlim, ylim = ylim) +", 
-"    theme(", "      axis.title = element_blank(),", "      axis.text = element_blank(),", 
-"      axis.ticks = element_blank(),", "      panel.border = element_blank(),", 
-"      panel.grid = element_blank(),", "      legend.position = legend.position", 
-"    )", "  ", "  # Return jittered or non-jittered plot?", "  if (jitter) {", 
-"    P + geom_jitter(width = 0.1, size = 2)", "  }", "  else {", 
-"    P + geom_point(size = 2)", "  }", "}", "", "signed_rank = function(x) sign(x) * rank(abs(x))", 
-"", "", "set.seed(40)", "# Data from example site", "y = c(rnorm(15), exp(rnorm(15)), runif(20, min = -3, max = 0))  # Almost zero mean, not normal", 
-"x = rnorm_fixed(50, mu = 0, sd = 1)  # Used in correlation where this is on x-axis", 
-"y2 = rnorm_fixed(50, mu = 0.5, sd = 1.5)  # Used in two means", 
-"", "# Long format data with indicator", "value = c(y, y2)", 
-"group = rep(c('y1', 'y2'), each = 50)", ""), chunk_opts = list(
-    label = "setup", include = FALSE)), setup = NULL, chunks = list(
-    list(label = "ANCOVA_2", code = "# create the linear model using `lm`\nm1<-lm(d13c ~ standard_length + area, data = anr)\n\n# look to see whether the variables in the model are significant\nAnova(m1)\n\n# we we still need to check whether the assumptions are met\nanr_resid <- residuals(m1)\ngf_qq(~anr_resid) %>%\n  gf_qqline()\n", 
-        opts = list(label = "\"ANCOVA_2\"", exercise = "TRUE"), 
-        engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = NULL, tests = NULL, options = list(
-        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
-        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
-        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
-        strip.white = TRUE, cache = 0, cache.path = "NES2505_othertests_cache/html/", 
-        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
-        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
-        fig.show = "asis", fig.align = "default", fig.path = "NES2505_othertests_files/figure-html/", 
-        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
-        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
-        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
-        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
-        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
-        max.print = 1000, label = "ANCOVA_2", exercise = TRUE, 
         code = c("# create the linear model using `lm`", "m1<-lm(d13c ~ standard_length + area, data = anr)", 
         "", "# look to see whether the variables in the model are significant", 
         "Anova(m1)", "", "# we we still need to check whether the assumptions are met", 
         "anr_resid <- residuals(m1)", "gf_qq(~anr_resid) %>%", 
         "  gf_qqline()", ""), out.width.px = 624, out.height.px = 384, 
-        params.src = " ANCOVA_2, exercise = TRUE", fig.num = 0, 
+        params.src = " ANCOVA, exercise = TRUE", fig.num = 0, 
         exercise.df_print = "paged", exercise.checker = "NULL"), 
     engine = "r", version = "4"), class = c("r", "tutorial_exercise"
 )))

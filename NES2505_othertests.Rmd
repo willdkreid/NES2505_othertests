@@ -617,12 +617,12 @@ Analysis of Covariance is slightly different to ANOVA but crucially it is still 
 For example, if we collect fish from two different locations (e.g. NW and SE), measure their standard lengths and analyse the biochemical composition of their tissue (d13C), we can test whether the gradient and elevation of the lines are significantly different.
 
 In doing this type of analysis it is important to plot your data first.
-```{r, ANCOVA-setup, warning=FALSE, include = FALSE}
+```{r, ANCOVAplot-setup, warning=FALSE, include = FALSE}
 anr <- read.csv("Data/anr_ancova.csv", header = TRUE, sep = ",")
 ```
 
 
-```{r, ANCOVA, exercise = TRUE}
+```{r, ANCOVAplot, exercise = TRUE}
 # plot data first
 gf_point(d13c ~ standard_length, col = ~area, data = anr) %>%
   gf_theme(theme_classic()) %>% 
@@ -635,8 +635,11 @@ You can see from the figure that the samples taken from the SE location appear g
 
 We can then undertake the analysis the same as previously using `lm()` function as we have done in the practicals.
 
+```{r, ANCOVA-setup, warning=FALSE, include = FALSE}
+anr <- read.csv("Data/anr_ancova.csv", header = TRUE, sep = ",")
+```
 
-```{r, ANCOVA_2, exercise = TRUE}
+```{r, ANCOVA, exercise = TRUE}
 # create the linear model using `lm`
 m1<-lm(d13c ~ standard_length + area, data = anr)
 
