@@ -602,87 +602,19 @@ sqrt(summary(b)$r.squared) # Or simply look at the summary output and sqrt(0.496
 ```
 
 In general try to avoid non-parametric tests when possible, due to their lower
-statistical power.   
+statistical power.
 
-## One-way ANOVA, two-way ANOVA, ANCOVA
+## Comparing 3 or more levels
+
+### One-way ANOVA, two-way ANOVA, ANCOVA
 The focus of this module has been learning statistical analysis from the perspective of a linear model. ANOVA is short for Analysis of Variance and we went through these statistical tests in practicals 2 and 3. We have used the `lm()` function because it is the easiest way of doing the analyses.
 
-* One-way ANOVA `lm()`: One explanatory factor (categorical variable) with 3 or more levels.
-* Two-way ANOVA `lm()`: Two explanatory factors (categorical variables) plus their interaction.
-
-### Analysis of Covariance (ANCOVA)
-
-Analysis of Covariance is slightly different to ANOVA but crucially it is still a type of linear model which follows the same rules. ANCOVA contains two explanatory variables: a categorical variable (factor) and a continuous variable (sometimes called a covariate) plus or minus an interactions. ANCOVA still uses the `lm()` function. The key concept here is that an ANCOVA can test whether there are differences in the gradient of the relationship between response variables and the continuous explanatory variable for multiple levels of the categorical variable.
-
-For example, if we collect fish from two different locations (e.g. NW and SE), measure their standard lengths and analyse the biochemical composition of their tissue (d13C), we can test whether the gradient and elevation of the lines are significantly different.
-
-In doing this type of analysis it is important to plot your data first.
-```{r, ANCOVAplot-setup, warning=FALSE, include = FALSE}
-anr <- read.csv("Data/anr_ancova.csv", header = TRUE, sep = ",")
-```
+* One-way ANOVA `lm()`: one categorical explanatory variable with 3 or more levels.
+* Two-way ANOVA `lm()`: two explanatory categorical variables potentially with an interaction.
+* ANCOVA `lm()`: one categorical explanatory variable and one continuous explanatory variable
 
 
-```{r, ANCOVAplot, exercise = TRUE}
-# plot data first
-gf_point(d13c ~ standard_length, col = ~area, data = anr) %>%
-  gf_theme(theme_classic()) %>% 
-  gf_lm(d13c ~ standard_length, col = ~area, data = anr) %>%
-  gf_labs(x = "Standard length (mm)", y = "d13c per mil")
-
-```
-
-You can see from the figure that the samples taken from the SE location appear greater than the NW and so is the line we have plotted through our data but are the locations significantly different?
-
-We can then undertake the analysis the same as previously using `lm()` function as we have done in the practicals.
-
-```{r, ANCOVA-setup, warning=FALSE, include = FALSE}
-anr <- read.csv("Data/anr_ancova.csv", header = TRUE, sep = ",")
-```
-
-```{r, ANCOVA, exercise = TRUE}
-# create the linear model using `lm`
-m1<-lm(d13c ~ standard_length + area, data = anr)
-
-# look to see whether the variables in the model are significant
-Anova(m1)
-
-# we we still need to check whether the assumptions are met
-anr_resid <- residuals(m1)
-gf_qq(~anr_resid) %>%
-  gf_qqline()
-
-```
-
-In this example, we have assumed that the two lines are parallel (i.e. have equal gradients) and that there is no interaction between `standard_length` and `area`. It is good practice to test for an interaction first. We can look more closely at the results by using `summary()` and find the coefficients for the intercepts and gradients of the lines as well as whether they are significant.
-
-```{r, ANCOVA_3-setup, include = FALSE}
-# create the linear model using `lm`
-m1<-lm(d13c ~ standard_length + area, data = anr)
-```
-
-```{r, ANCOVA_3, exercise = TRUE}
-summary(m1)
-
-```
-
-The table is a combination of what you have seen already when interpreting the [linear models with continuous variables](https://naturalandenvironmentalscience.shinyapps.io/MST2204_regression/#section-how-to-interpret-lm-summary) and [linear models with categorical variables](https://naturalandenvironmentalscience.shinyapps.io/MST2204_linear_model_cat/#section-what-about-the-individual-levels).
-
-The table can be interpreted as follows for those data from the NW area:
-
-* `intercept` = `-20.812942`
-* gradient of the line = `0.003331`
-
-The interpretation for the SE area is very similar except that the intercept is different:
-
-* `intercept` = `-20.812942` + `0.446764`
-* gradient of the line = `0.003331`
-
-The `intercept` for the SE area is ~0.4 per mil higher than the NW station. You can see this in the figure where the blue SE line is higher than the red NW line.
-
-You will find that for Two-way ANOVA with unbalanced data and for ANCOVA, the most
-accurate F-values are calculated by using the `Anova()` function from the `car` package which does Type-II Sums of Squares.
-
-## Kruskal-Wallis test
+### Kruskal-Wallis test
 The Kruksal-Wallis test is the non-parametric equivalent of a one-way ANOVA and is used when data are not normally distributed. The test is used when you have 3 or more levels in your categorical variable. The test is based on ranking the data as in the Wilcoxon test but this time it compares the ranked sums within each group.
 
 You can see whether your data follows a normal distribution (bell-shaped curve) by plotting the histograms. In group a and b below, their data are either skewed to the left or right but group c follows a bell-shaped curve. It means that groups a and b are unlikely to be normally distributed. You could give a linear model a go and check the assumptions by looking at the residuals (recommended) but some researchers will undertake the non-parametric Kruskal-Wallis test. The different groups within the categorical variable still need to have similar levels of variability for this test to be undertaken so make sure you check your boxplots if you ever use this test. 
