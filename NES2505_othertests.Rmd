@@ -69,15 +69,14 @@ y2 = rnorm_fixed(50, mu = 0.5, sd = 1.5)  # Used in two means
 value = c(y, y2)
 group = rep(c('y1', 'y2'), each = 50)
 
+white_cell<-read.csv("Data/white_cell.csv")
+
 ```
 
 
 ## "Please do stats test XYZ"
 
-When you are collecting data for other modules, reading scientific papers or in your Stage 3 projects, you
-will often find that a member of staff is suggesting that you analyse your data
-with a statistical test that you have not heard of. However, many of these 
-'standard' statistical tests can be considered to be linear models. If you find
+When you are collecting data for other modules, reading scientific papers or in your Stage 3 projects, you will often come across a statistical test that you have not heard of. However, many of these 'standard' statistical tests can be considered to be linear models. If you find
 it less confusing to consider them as forms of linear models, then feel free to
 stick to that. If you prefer to use the built-in R commands for each test, then
 that is fine also. **What matters is the underlying hypothesis** that you are
@@ -89,7 +88,7 @@ in their __linear model__ format and their __built-in__ format. You can find
 full details of this philosophy for teaching statistics at https://lindeloev.github.io/tests-as-linear/
 
 ### Overall philsophy
-The key thing to remember is that all these tests can be considered within the (generalised) linear model framework. Most can be considered as linear models, although there are a handful that need generalised linear models (GLMs). We have not considered GLMs in these sessions but some of you may see them in papers or will attempt them next year. The overall philosophy is unchanged, i.e.:
+The key thing to remember is that all these tests can be considered within the (generalised) linear model framework. Most can be considered as linear models, although there are a handful that need generalised linear models (GLMs). We have not considered all forms of GLMs in these sessions but some of you may see them in papers. The overall philosophy is unchanged, i.e.:
 
 $$Response = Explanatory + \epsilon$$
 
@@ -151,7 +150,7 @@ sizes. However, Guinness Breweries wanted to keep the method secret, and would n
 let him publish the technique. Gossett then published it under the pseudonym "Student"
 and the name has stuck.
 
-You will often encounter t-statistics, often to check whether an estimated parameter
+You will encounter t-statistics, often to check whether an estimated parameter
 from a model, such as an intercept or gradient, differs from zero. If the parameter
 is big (large negative or positive value), then the t-statistic will be statistically
 significant (p<0.05), whereas if the parameter is roughly zero, the t-statistic will
@@ -262,7 +261,7 @@ and
 are exactly the same.
 
 **But we don't have any explanatories?!**
-If all you want to do is see if the overall average of your numbers differs from zero, you do not of course have a set of explanatories. You can simply tell R to only fit the `(Intercept)` term, which as we have just seen will be the overall average. So we simply need something like:
+If all you want to do is see if the overall average of your numbers differs from zero, you do not to have a set of explanatories. You can simply tell R to only fit the `(Intercept)` term, which as we have just seen will be the overall average. So we simply need something like:
 
 `simple_ttest <- lm(y ~ 1, data=my_dat)`
 
@@ -385,7 +384,7 @@ fish_dat <- data.frame(before_feed = y[1:15]+2, after_feed = y2[1:15]+2)
 ```
 
 Here is an example of the analysis in R, using either the built-in `t.test()` or `lm()`
-functions on a dataset of 15 fish with blood haemoglobin, before and after receiving a food supplement. In this example, the two columns are labelled `before_feed` and `after_feed`, the mean difference haemoglobin in the fishes before and after being ```r mean(before_feed - after_feed ~ NULL, data=fish_dat)``` . Is this value significantly different from zero?
+functions on a dataset of 15 fish with blood haemoglobin, before and after receiving a food supplement. In this example, the two columns are labelled `before_feed` and `after_feed`, the mean difference haemoglobin in the fishes before and after being `r mean(before_feed - after_feed ~ NULL, data=fish_dat)` . Is this value significantly different from zero?
 
 ```{r paired_t_test_analysis-setup}
 fish_dat <- data.frame(before_feed = y[1:15]+2, after_feed = y2[1:15]+2)
@@ -407,7 +406,7 @@ b = lm(before_feed - after_feed ~ 1, data=fish_dat)
 summary(b)
 ```
 
-Again you can see that the results from the two analyses are very similar. The syntax of the conventional `t.test()` function is a bit clumsy, as you need to specify both the data.frame name (`fish_dat`) with the column using the `$` specifier. The `lm()` formulation is much simpler. We set `~ 1` as the explanatory, to indicate that we are only testing whether the overall mean (of the differences) is zero or not. Note that the `(Intercept)` value of ```r mean(before_feed - after_feed ~ NULL, data=fish_dat)``` is the average of the differences in haemoglobin, before and after feed.
+Again you can see that the results from the two analyses are very similar. The syntax of the conventional `t.test()` function is a bit clumsy, as you need to specify both the data.frame name (`fish_dat`) with the column using the `$` specifier. The `lm()` formulation is much simpler. We set `~ 1` as the explanatory, to indicate that we are only testing whether the overall mean (of the differences) is zero or not. Note that the `(Intercept)` value of `r mean(before_feed - after_feed ~ NULL, data=fish_dat)` is the average of the differences in haemoglobin, before and after feed.
 
 As the p-value is greater than 0.05, we assume that the fish feed supplement is not having a significant effect on blood haemoglobin.
 
@@ -456,19 +455,19 @@ P_t2 = ggplot(D_t2, aes(x=x, y=y)) +
 theme_axis(P_t2, jitter = TRUE, xlim = c(-0.3, 2), legend.position = c(0.53, 0.08))
 ```
 
-You might be wondering **How does this differ from a standard linear model, with a categorical explanatory variable that contains 2 levels?** Well, the short answer is, it doesn't, it is basically the same analysis with a different name! The long answer is that in simple situations like this it is conventional to report the t-statistic rather than the F-ratio, partly as the t-distribution can correct for small sample sizes (you may have noticed that the t-distribution and normal distribution are very similar, but not exactly the same). So the basic model you are working with is:
+You might be wondering **How does this differ from a standard linear model, with a categorical explanatory variable that contains 2 levels?** Well, the short answer is, it doesn't. It is basically the same analysis with a different name! The long answer is that in simple situations like this it is conventional to report the t-statistic rather than the F-ratio, partly as the t-distribution can correct for small sample sizes (you may have noticed that the t-distribution and normal distribution are very similar, but not exactly the same). So the basic model you are working with is:
 
 $$Response = Explanatory + \epsilon$$
 
 where your _Explanatory_ variable is categorical, with only 2 categories (levels).
 
 ### Data entry for Student's t-test
-Again, use Microsoft Excel, but save in `.CSV` format. However, the way in which you enter your data might be slightly different:
+The way in which you format your data will be slightly different for the `t.test()` adn `lm()`:
 
 * for the built-in `t.test()` function enter it as two columns, i.e. "wide" data format. The first for one level of your explanatory variable, the second for the other one. The explanatory variable is not explicitly coded, but simply indicated by the two columns.
 * if using `lm()` function, two columns, but in "long" data format. The first column is all of the data, and the second the two categories of your explanatory (factor) variable which has two levels.
 
-The latter is amenable to boxplots, violinplots etc. You can't do this with the former, so this is another advantage of sticking to the "response ~ explanatory" template.
+The latter is amenable to boxplots. You can't do this with the former, so this is another advantage of sticking to the `response ~ explanatory` template.
 
 This example looks at the nerve electro-potential responses in 100 frog muscle samples with and without a cholinesterase inhibitor:
 
@@ -509,7 +508,7 @@ The p-values and t-statistics are roughly the same for the two functions, but st
 * The `Estimate` on the row marked `Intercept` is actually the mean value for the
 first level of your explanatory, i.e. `control` (first level because `c` for `control` comes before `i` for `inhibitor` in the alphabet)
 * The `Estimate` for `treatmentinhibitor` is the **difference** in the mean value of
-the two levels of your explanatory. This difference is statistical significant as p<0.05 atp=0.012
+the two levels of your explanatory. This difference is statistical significant as p<0.05 at p=0.012
 * The absolute value of the t-statistic is the same for either the `lm()` or `t.test()` methods
 
 When reporting the `lm()` results you would write something like **"There was an increase of 0.845 ($\mu$/s) in the electro-potential of muscles receiving cholinesterase (t=2.553, p=0.012, df=98)"**. Note that the t-statistic as well as the p-value is quoted. As you can see, the `t.test()` and `lm()` approaches give roughly identical results, but the `lm()` method is much easier, and amenable to plotting data etc.
@@ -577,7 +576,7 @@ results of your `lm()` function for a more general approach.
 Play around with the code in the above exercise by swapping var3 and var1. You will notice that the correlation coefficient, r, is unchanged irrespective of whether var3 or var1 is
 first in the `lm()` function call.
 
-You will notice that in `cor.test(var3, var1, method="pearson")` the method is referred to as `pearson`. This is because when these data follow a bivariate normal distribution a **Pearson correlation** is used. If either or both of the variables follows a non-normal distribution then their joint distribution cannot be normal and the assumptions of the test cannot be met. It is important to check the assumptions of the test before undertaking the analyses by plotting your data as a scatterplot to check that the two variables show a linear relationship (in this case follow a straight line) and by looking at boxplots and histograms to check that those data are normally distributed.
+You will notice that in `cor.test(var3, var1, method="pearson")` the method is referred to as `pearson`. This is because when data follow a bivariate normal distribution, a **Pearson correlation** is used. If either or both of the variables follows a non-normal distribution then their joint distribution cannot be normal and the assumptions of the test cannot be met. It is important to check the assumptions of the test before undertaking the analyses by plotting your data as a scatterplot to check that the two variables show a linear relationship (in this case follow a straight line) and by looking at boxplots and histograms to check that those data are normally distributed.
 
 ### Rank correlation
 If you are undertaking a correlation analysis and your data do not follow a bivariate normal distribution, then you can undertake a rank based correlation. Rank correlation is usually referred to as **Spearman** rank correlation, which is the non-parametric equivalent of a Pearson correlation. 
@@ -615,47 +614,39 @@ The focus of this module has been learning statistical analysis from the perspec
 
 
 ### Kruskal-Wallis test
-The Kruksal-Wallis test is the non-parametric equivalent of a one-way ANOVA and is used when data are not normally distributed. The test is used when you have 3 or more levels in your categorical variable. The test is based on ranking the data as in the Wilcoxon test but this time it compares the ranked sums within each group.
+The Kruksal-Wallis test is referred to as the non-parametric equivalent of a one-way ANOVA. It is used when data are not normally distributed. The test is used when you have 3 or more levels in your categorical variable. The test is based on ranking the data as in the Wilcoxon test but this time it compares the ranked sums within each group.
 
-You can see whether your data follows a normal distribution (bell-shaped curve) by plotting the histograms. In group a and b below, their data are either skewed to the left or right but group c follows a bell-shaped curve. It means that groups a and b are unlikely to be normally distributed. You could give a linear model a go and check the assumptions by looking at the residuals (recommended) but some researchers will undertake the non-parametric Kruskal-Wallis test. The different groups within the categorical variable still need to have similar levels of variability for this test to be undertaken so make sure you check your boxplots if you ever use this test. 
-
-```{r, kw_example-setup, include = FALSE}
-
-read.csv("white.")
-
-```
-
+We can look at whether there are differences between the groups using boxplots as we have done previously. When you look at these boxplots, the median is not in the centre of the box which would suggest that for some of levels of this categorical variable, these data do no follow a normal distribution (bell-shaped curve). 
 
 ```{r, kw_example, exercise = TRUE}
-# Plot histograms to look at the distribution
-gf_histogram(~conc, bins= 8, data = white_cell) %>%
-  gf_theme(theme_classic())
-
-# you can double check which are not normally distributed use the Shapiro-Wilk Test for normality
-white_cell %>% filter(fish_group == "a") -> fishgroup_a
-white_cell %>% filter(fish_group == "b") -> fishgroup_b
-white_cell %>% filter(fish_group == "c") -> fishgroup_c
-
-shapiro.test(fishgroup_a$conc)
-shapiro.test(fishgroup_b$conc)
-shapiro.test(fishgroup_c$conc)
-
 # check the variability with the boxplots
 gf_boxplot(conc ~ fish_group, data = white_cell) %>%
   gf_theme(theme_classic())
+```
 
+We can plot a histogram for each level and look more closely to see whether the data for each level of the categorical variable has a skewed distribution. Run the code below and look at the distribution of the data in groups a, b and c. For groups a and b, those data have a skewed distribution which indicates these data do not come from a normal distribution. Group a has a right-skewed distribution because the tail is to the right of distribution while group b has a left-skewed distribution. Looking at group c, we have a nice bell-shaped curve which indicates a normal distribution.
+
+```{r, kw_hist, exercise = TRUE}
+# Plot histograms to look at the distribution
+gf_histogram(~conc|fish_group, bins= 9, data = white_cell) %>%
+  gf_theme(theme_classic())
+```
+
+You could give a linear model a go and check the assumptions by looking at the residuals (recommended) and you will likely see that the assumptions of your analysis are not met. Then transform your response variable using `log` or `sqrt` and rerun your analysis to see if your assumptions have been met. However, some researchers will undertake the non-parametric Kruskal-Wallis test.
+
+```{r, kw_test, exercise = TRUE}
 # Undertake the Kruskal-Wallis test
 kruskal.test(conc ~ fish_group, data = white_cell)
 
 ```
-When reporting a Kruskal-Wallis test, make sure you quote the $\chi^2$ value, degrees of freedom and the p-value. 
 
+When reporting a Kruskal-Wallis test, make sure you quote the $\chi^2$ value, degrees of freedom and the p-value. 
 
 ## Chi-squared tests
 Chi-squared tests are based on 'contingency tables' which analyse the number of cases across two different variables, and calculate the **observed** and **expected** values for each combination, before calculating the overall Chi-squared statistic.
 
 Chi-squared tests often arise in genetics where you are comparing the **counts**
-of different individuals with certain observable phenotypes or traits. We haven't covered chi-squared within the practicals but instruction on how to do them by hand can be found in [Analysing Frequencies - Chi-sqaured test](https://ncl.instructure.com/courses/46793/pages/analysing-frequencies-chi-square-test?module_item_id=2523294) section of Experimental Design and Statistics, which you **need** work through **in addition** to the example given below. 
+of different individuals with certain observable phenotypes or traits. 
 
 ### Example data
 Let's say we want to know whether there is a relationship between hair colour
@@ -713,7 +704,6 @@ Hopefully this section has shown you that many "traditional" statistical tests f
 neatly into the (generalised) linear model framework, so that you don't feel quite
 so overwhelmed by all the different methods out there.
 
-You can find a good review of the subject for teaching statistics by this approach
-at
+You can find a good review of the subject for teaching statistics by this approach at
 
-<https://lindeloev.github.io/tests-as-linear/>
+https://lindeloev.github.io/tests-as-linear/
